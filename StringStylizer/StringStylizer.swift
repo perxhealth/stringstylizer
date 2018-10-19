@@ -683,6 +683,7 @@ public extension StringStylizer where  T: Styling {
     
     /**
      set range to assign attributes
+     ignores existing attributes
      
      - parameter range:Range (default: nil)
      - returns: StringStylizer<NarrowDown>
@@ -699,6 +700,7 @@ public extension StringStylizer where  T: Styling {
 
     /**
      set search to assign attributes
+     ignores existing attributes
 
      - parameter rangeString: String
      - returns: StringStylizer<NarrowDown>
@@ -707,5 +709,35 @@ public extension StringStylizer where  T: Styling {
         let nsrange = NSString(string: _attrString.string).range(of: rangeString)
         let range = CountableRange<UInt>(uncheckedBounds: (lower: UInt(nsrange.location), upper: UInt(nsrange.location + nsrange.length)))
         return StringStylizer<NarrowDown>(attributedString: _attrString, range: range)
+    }
+    
+    /**
+     set range to assign attributes
+     compounds on existing attributes
+     
+     - parameter range:Range (default: nil)
+     - returns: StringStylizer<NarrowDown>
+     */
+    public func additiveRange(_ range: CountableRange<UInt>? = nil) -> StringStylizer<NarrowDown> {
+        let attrString = NSMutableAttributedString(attributedString: _attrString)
+        attrString.setAttributes(_attributes, range: NSRange(Int(_range.startIndex)..<Int(_range.endIndex)))
+        
+        let range = range ?? 0..<UInt(attrString.length)
+        let endIndex = min(range.endIndex, UInt(_attrString.length))
+        let validRange = range.startIndex..<endIndex
+        return StringStylizer<NarrowDown>(attributedString: attrString, range: validRange, attributes: _attributes)
+    }
+
+    /**
+     set search to assign attributes
+     compounds on existing attributes
+
+     - parameter rangeString: String
+     - returns: StringStylizer<NarrowDown>
+    */
+    public func additiveSearch(_ rangeString: String) -> StringStylizer<NarrowDown> {
+        let nsrange = NSString(string: _attrString.string).range(of: rangeString)
+        let range = CountableRange<UInt>(uncheckedBounds: (lower: UInt(nsrange.location), upper: UInt(nsrange.location + nsrange.length)))
+        return StringStylizer<NarrowDown>(attributedString: attr, range: range, attributes: _attributes)
     }
 }
