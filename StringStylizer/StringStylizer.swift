@@ -725,7 +725,7 @@ public extension StringStylizer where  T: Styling {
         let range = range ?? 0..<UInt(attrString.length)
         let endIndex = min(range.endIndex, UInt(_attrString.length))
         let validRange = range.startIndex..<endIndex
-        return StringStylizer<NarrowDown>(attributedString: attrString, range: validRange, attributes: _attributes)
+        return StringStylizer<NarrowDown>(attributedString: attr, range: validRange, attributes: _attributes)
     }
 
     /**
